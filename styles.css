@@ -1,0 +1,9 @@
+#chatbox { width: 400px; height: 500px; border: 1px solid #ddd; border-radius: 10px; display: flex; flex-direction: column; margin: 20px auto; }
+#messages { flex: 1; padding: 10px; overflow-y: auto; }
+.msg { margin: 5px 0; padding: 6px 10px; border-radius: 8px; }
+.user { text-align: right; background: #e0f7fa; }
+.assistant { text-align: left; background: #f1f1f1; }
+#inputBox { display: flex; border-top: 1px solid #ddd; }
+#userInput { flex: 1; padding: 10px; border: none; outline: none; }
+#sendBtn, #micBtn { padding: 10px; border: none; background: #4CAF50; color: white; cursor: pointer; margin-left: 2px; }
+#sendBtn:hover, #micBtn:hover { background: #45a049; }

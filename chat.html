@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Universal AI Assistant - Multi-Language</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="chatbox">
+  <div id="messages"></div>
+  <div id="inputBox">
+    <input type="text" id="userInput" placeholder="Ask me anything...">
+    <button id="sendBtn">Send</button>
+    <button id="micBtn">🎤</button>
+  </div>
+</div>
+
+<script>
+const OPENAI_PROXY_URL = "https://your-deployed-backend.com/chat";
+const messagesDiv = document.getElementById("messages");
+const input = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+const micBtn = document.getElementById("micBtn");
+
+function addMessage(role, text) {
+  const div = document.createElement("div");
+  div.className = "msg " + role;
+  div.textContent = text;
+  messagesDiv.appendChild(div);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+async function sendMessage(query = null) {
+  const userQuery = query || input.value.trim();
+  if(!userQuery) return;
+  addMessage("user", userQuery);
+  input.value = "";
+
+  addMessage("assistant", "Thinking...");
+
+  const res = await fetch(OPENAI_PROXY_URL, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ query: userQuery })
+  });
+
+  const data = await res.json();
+  messagesDiv.lastChild.textContent = data.answer;
+
+  const utterance = new SpeechSynthesisUtterance(data.answer);
+  utterance.lang = "auto";
+  speechSynthesis.speak(utterance);
+}
+
+sendBtn.addEventListener("click", () => sendMessage());
+input.addEventListener("keypress", e => { if(e.key==="Enter") sendMessage(); });
+
+if ("webkitSpeechRecognition" in window) {
+  const recognition = new webkitSpeechRecognition();
+  recognition.interimResults = false;
+  recognition.onresult = e => sendMessage(e.results[0][0].transcript);
+  micBtn.addEventListener("click", () => recognition.start());
+} else {
+  micBtn.disabled = true;
+  micBtn.textContent = "❌";
+}
+</script>
+</body>
+</html>
